@@ -1,45 +1,3 @@
-function CheckButton(x, y, w, h, label) {
-	this.x = x;
-	this.y = y;
-	this.w = w;
-	this.h = h;
-	this.label = label;
-	this.checked = false;
-	
-}
-
-CheckButton.prototype.draw = function() {
-	this.checked ? fill(0, 255, 0) : fill(255, 0, 0);
-	stroke(200);
-	push();
-	translate(this.x, this.y);
-	beginShape();
-	vertex(0, 0);
-	vertex(this.w, 0);
-	vertex(this.w, this.h);
-	vertex(0, this.h);
-	endShape(CLOSE);
-		
-	
-	this.checked ? fill(0) : fill(255);
-	textSize(32);
-	textAlign(CENTER,CENTER);
-	text(this.label, this.w/2, this.h/2);
-	pop();
-	
-
-}
-
-CheckButton.prototype.collide = function() {
-	if (mouseX >= this.x && mouseX <= this.x + this.w && mouseY >= this.y && mouseY <= this.y + this.h) {
-		if (this.callbackFn != null) {
-			this.callbackFn(this);
-		}
-		this.checked = !this.checked;
-		return true;
-	}
-	return false;
-}
 
 function setup() {
 	windowResized();
@@ -54,6 +12,20 @@ function setup() {
 	this.buttonAlign = new CheckButton(20, 20, 140, 50, "Align");
 	this.buttonSeperate = new CheckButton(20, 80, 140, 50, "Seperate");
 	this.buttonCohesion = new CheckButton(20, 140, 140, 50, "Cohere");
+	
+	//{x, y, w, h, sliderW, sliderH, min, max, value, label}
+	this.sliderTest = new Slider({
+		x: 400,
+		y: 400,
+		w: 100, 
+		h: 20, 
+		sliderW: 20, 
+		sliderH: 40, 
+		min: 0, 
+		max: 100, 
+		value: 50, 
+		label: "alignment"
+	});
 }
 
 
@@ -76,11 +48,19 @@ function draw() {
 	this.buttonAlign.draw();
 	this.buttonSeperate.draw();
 	this.buttonCohesion.draw();
+	
+	this.sliderTest.draw();
 }
 
 function touchStarted() {
 	if (this.buttonAlign.collide() || this.buttonSeperate.collide() || this.buttonCohesion.collide()) 
 		return;
+	
+	if (this.sliderTest.isCollide(mouseX, mouseY)) {
+		
+		return;
+	}
+		
 	this.isTouchDown =  true;
 }
 function touchEnded() {
