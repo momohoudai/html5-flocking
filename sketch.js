@@ -1,3 +1,7 @@
+var SLIDER_ALIGNMENT = 0;
+var SLIDER_SEPERATE = 1;
+var SLIDER_COHESION = 2;
+
 
 function setup() {
 	windowResized();
@@ -9,23 +13,47 @@ function setup() {
 		boids.push(new Boid(width / 2, height / 2));
 	}
 	
-	this.buttonAlign = new CheckButton(20, 20, 140, 50, "Align");
-	this.buttonSeperate = new CheckButton(20, 80, 140, 50, "Seperate");
-	this.buttonCohesion = new CheckButton(20, 140, 140, 50, "Cohere");
-	
-	//{x, y, w, h, sliderW, sliderH, min, max, value, label}
-	this.sliderTest = new Slider({
-		x: 400,
-		y: 400,
-		w: 100, 
-		h: 20, 
-		sliderW: 20, 
-		sliderH: 40, 
-		min: 0, 
-		max: 100, 
-		value: 50, 
-		label: "alignment"
-	});
+	this.sliders = [
+		new Slider({
+			x: 20,
+			y: 20,
+			w: 100, 
+			h: 10, 
+			sliderW: 15, 
+			sliderH: 25, 
+			min: 0.0, 
+			max: 1.0, 
+			value: 0.0, 
+			label: "alignment",
+			textSize: 24,
+		}),
+		new Slider({
+			x: 20,
+			y: 60,
+			w: 100, 
+			h: 10, 
+			sliderW: 15, 
+			sliderH: 25, 
+			min: 0.0, 
+			max: 1.0, 
+			value: 0.0, 
+			label: "seperation",
+			textSize: 24,
+		}),
+		new Slider({
+			x: 20,
+			y: 100,
+			w: 100, 
+			h: 10, 
+			sliderW: 15, 
+			sliderH: 25, 
+			min: 0.0, 
+			max: 1.0, 
+			value: 0.0, 
+			label: "cohesion",
+			textSize: 24,
+		})
+	]
 }
 
 
@@ -41,28 +69,37 @@ function draw() {
 	}
 	
 	for (let boid of boids) {
-		boid.flock(this.boids, this.buttonAlign.checked, this.buttonSeperate.checked, this.buttonCohesion.checked ); 
-		boid.update();
+		let state = {
+			boidList: this.boids,
+			alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
+			seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
+			cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
+		}
+		boid.update(state);
 	}
 	
-	this.buttonAlign.draw();
-	this.buttonSeperate.draw();
-	this.buttonCohesion.draw();
-	
-	this.sliderTest.draw();
+	for(let slider of this.sliders) {
+		slider.update();
+	}
 }
 
 function touchStarted() {
-	if (this.buttonAlign.collide() || this.buttonSeperate.collide() || this.buttonCohesion.collide()) 
-		return;
-	
-	if (this.sliderTest.isCollide(mouseX, mouseY)) {
-		
-		return;
+
+	let sliderTouched = false;
+	for (let slider of this.sliders) {
+		if (slider.touchStarted()) {
+			sliderTouched = true;
+		}
 	}
+
+	if (sliderTouched)
+		return;
 		
 	this.isTouchDown =  true;
 }
 function touchEnded() {
+	for (let slider of this.sliders) 
+		slider.touchEnded();
+
 	this.isTouchDown = false; 
 }

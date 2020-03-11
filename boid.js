@@ -6,33 +6,30 @@ function Boid(x, y) {
 	this.maxSpeed = 3;
 	this.maxSteer = 0.05;
 	this.radius = 5;
-
-	this.alignmentFactor = 1.0;
-	this.seperateFactor = 1.0;
-	this.cohesionFactor = 1.0;
-
+	
 	this.alignmentRadius = 100.0;
 	this.seperateRadius = 25.0;	
 	this.cohesionRadius = 50.0;
 
 }
 
-Boid.prototype.update = function()
+Boid.prototype.update = function(state)
 {
+	this.flock(state);
 	this.integrate();
 	this.wrap();
 	this.render();
 }
 
-Boid.prototype.flock = function(boidList, isAlign, isSeperate, isCohesion) {
-	let alignmentForce = isAlign ? this.alignment(boidList) : createVector(0,0);
-	let seperationForce = isSeperate ? this.seperate(boidList) : createVector(0,0);
-	let cohesionForce = isCohesion ? this.cohesion(boidList) : createVector(0,0);
+Boid.prototype.flock = function({boidList, alignmentFactor, seperateFactor, cohesionFactor}) {
+	let alignmentForce = this.alignment(boidList);
+	let seperationForce = this.seperate(boidList);
+	let cohesionForce = this.cohesion(boidList);
 	
 	
-	this.addForce(p5.Vector.mult(alignmentForce, this.alignmentFactor));
-	this.addForce(p5.Vector.mult(seperationForce, this.seperateFactor));
-	this.addForce(p5.Vector.mult(cohesionForce, this.cohesionFactor));
+	this.addForce(p5.Vector.mult(alignmentForce, alignmentFactor));
+	this.addForce(p5.Vector.mult(seperationForce, seperateFactor));
+	this.addForce(p5.Vector.mult(cohesionForce, cohesionFactor));
 	
 }
 
