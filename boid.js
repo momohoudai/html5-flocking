@@ -1,19 +1,14 @@
 
 function Boid(x, y) {
-
-	this.maxSpeed = 3;
+	this.acceleration = createVector(0,0);
+	this.velocity = createVector(random(-2, 2), random(-2, 2));
+	this.position = createVector(x, y);
+	this.maxSpeed = 5;
 	this.maxSteer = 0.05;
 	this.radius = 5;
 
-	this.acceleration = createVector(0,0);
-	this.velocity = createVector(random(-2, 2), random(-2, 2));
-	this.velocity.normalize();
-	this.velocity.mult(this.maxSpeed);
-	this.position = createVector(x, y);
-
-	
-	this.alignmentRadius = 50.0;
-	this.seperateRadius = 50.0;	
+	this.alignmentRadius = 100.0;
+	this.seperateRadius = 25.0;	
 	this.cohesionRadius = 50.0;
 
 }

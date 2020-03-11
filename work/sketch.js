@@ -9,8 +9,8 @@ function setup() {
 
 	this.boids = [];
 	this.isTouchDown = false;
-	for(let i = 0; i < 100; ++i) {
-		boids.push(new Boid(width / 2, height / 2));
+	for(let i = 0; i < 200; ++i) {
+		boids.push(new Boid(random(0.0, width), random(0.0, height)));
 	}
 	
 	this.sliders = [
@@ -23,7 +23,7 @@ function setup() {
 			sliderH: 25, 
 			min: 0.0, 
 			max: 1.0, 
-			value: 0.0, 
+			value: 0.5, 
 			label: "alignment",
 			textSize: 24,
 		}),
@@ -36,7 +36,7 @@ function setup() {
 			sliderH: 25, 
 			min: 0.0, 
 			max: 1.0, 
-			value: 0.0, 
+			value: 0.5, 
 			label: "seperation",
 			textSize: 24,
 		}),
@@ -49,7 +49,7 @@ function setup() {
 			sliderH: 25, 
 			min: 0.0, 
 			max: 1.0, 
-			value: 0.0, 
+			value: 0.5, 
 			label: "cohesion",
 			textSize: 24,
 		})
