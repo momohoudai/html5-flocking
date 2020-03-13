@@ -1,4 +1,5 @@
 
+
 function Boid(x, y) {
 
 	this.maxSpeed = 3;
@@ -26,15 +27,19 @@ Boid.prototype.update = function(state)
 	this.render();
 }
 
-Boid.prototype.flock = function({boidList, alignmentFactor, seperateFactor, cohesionFactor}) {
+Boid.prototype.flock = function({boidList, predatorList, alignmentFactor, seperateFactor, cohesionFactor}) {
+	let avoidForce = this.avoid(predatorList);
 	let alignmentForce = this.alignment(boidList);
 	let seperationForce = this.seperate(boidList);
 	let cohesionForce = this.cohesion(boidList);
 	
 	
-	this.addForce(p5.Vector.mult(alignmentForce, alignmentFactor));
-	this.addForce(p5.Vector.mult(seperationForce, seperateFactor));
-	this.addForce(p5.Vector.mult(cohesionForce, cohesionFactor));
+	this.addForce(p5.Vector.mult(avoidForce, 5.0));
+	if (avoidForce.magSq() <= 0) {
+		this.addForce(p5.Vector.mult(alignmentForce, alignmentFactor));
+		this.addForce(p5.Vector.mult(seperationForce, seperateFactor));
+		this.addForce(p5.Vector.mult(cohesionForce, cohesionFactor));
+	}
 	
 }
 
@@ -67,6 +72,34 @@ Boid.prototype.alignment = function(boidList) {
 	} 
 	else {
 		return createVector(0,0);
+	}
+}
+
+Boid.prototype.avoid = function(obstacleList) {
+	let obstacleCount = 0;
+	let dir = createVector(0,0);
+	for (let obstacle of obstacleList) {
+		let distance = p5.Vector.dist(this.position, obstacle.position);
+		if (distance > 0 && distance < 80) {
+			dir = p5.Vector.sub(this.position, obstacle.position);
+			++obstacleCount;
+		}
+	}
+
+	if (obstacleCount > 0 ) {
+		dir.div(obstacleCount);
+	
+		if (dir.mag() > 0) {
+			dir.normalize();
+			dir.mult(this.maxSpeed);
+			dir.sub(this.velocity);
+			dir.limit(this.maxSteer);
+		}
+	
+		return dir;
+	}
+	else {
+		return createVector(0,0)
 	}
 }
 

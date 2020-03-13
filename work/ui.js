@@ -96,3 +96,43 @@ Slider.prototype.touchEnded = function() {
 	this.isDragging = false;
 }
 
+function Switch({x, y, w, h, labelT, labelF, colorT, colorF}) {
+	this.x = x;
+	this.y = y;
+	this.w = w;
+	this.h = h;
+	this.labelT = labelT;
+	this.labelF = labelF;
+	this.colorT = colorT;
+	this.colorF = colorF;
+	
+	this.checked = true;
+	
+}
+
+Switch.prototype.draw = function() {
+	this.checked ? fill(this.colorT) : fill(this.colorF);
+	stroke(200);
+	push();
+	translate(this.x, this.y);
+	beginShape();
+	vertex(0, 0);
+	vertex(this.w, 0);
+	vertex(this.w, this.h);
+	vertex(0, this.h);
+	endShape(CLOSE);
+	fill(255)
+	textSize(20);
+	textAlign(CENTER,CENTER);
+	text(this.checked ? this.labelT : this.labelF, this.w/2, this.h/2);
+	pop();
+}
+	
+
+Switch.prototype.processTouch = function() {
+	if (mouseX >= this.x && mouseX <= this.x + this.w && mouseY >= this.y && mouseY <= this.y + this.h) {
+		this.checked = !this.checked;
+		return true;
+	}
+	return false;
+}
