@@ -95,13 +95,13 @@ function draw() {
 		}
 		boid.update(state);
 	}
-	
-	for(let slider of this.sliders) {
-		slider.update();
-	}
 
 	for(let predator of this.predators) {
 		predator.update();
+	}
+
+	for(let slider of this.sliders) {
+		slider.update();
 	}
 	this.spawnSwitch.draw();
 }
