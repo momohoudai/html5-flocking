@@ -12,7 +12,7 @@ function Predator(x, y) {
 }
 
 Predator.prototype.update = function() {
-	this.position.add(this.velocity);
+
 	this.integrate();
 	this.wrap();
 
