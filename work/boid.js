@@ -52,7 +52,6 @@ Boid.prototype.flock = function({objList, predatorList, alignmentFactor, seperat
 	this.addForce(p5.Vector.mult(alignmentForce, alignmentFactor));
 	this.addForce(p5.Vector.mult(seperateForce, seperateFactor));
 	this.addForce(p5.Vector.mult(cohesionForce, cohesionFactor));
-	
 }
 
 Boid.prototype.align = function(obj) {

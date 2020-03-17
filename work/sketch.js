@@ -11,15 +11,18 @@ var SPATIAL_PARTITON = true;
 
 
 function setup() {
+	this.boidCount = 0;
+	this.predatorCount = 0;
+	this.objs = [];
 	this.grid = new Grid(50, 50);
 	windowResized();
 	
-	this.boids = [];
+
+	addPredator(200, 200);
 	this.isTouchDown = false;
 	for(let i = 0; i < 500; ++i) {
-		boids.push(new Boid(random(0.0, width), random(0.0, height)));
+		addBoid(random(0.0, width), random(0.0, height));
 	}
-	this.predators = [new Predator(200, 200)];	
 
 	this.sliders = [
 		new Slider({
@@ -88,11 +91,20 @@ function drawStats(x, y) {
 	textSize(20);
 	textAlign(LEFT,LEFT);
 	text("FPS: " + floor(frameRate()), x ,y);
-	text("Boids: " + this.boids.length, x , y + 30);
-	text("Predators: " + this.predators.length, x , y + 60);
+	text("Boids: " + this.boidCount, x , y + 30);
+	text("Predators: " + this.predatorCount, x , y + 60);
 	pop();
 }
 
+function addPredator(x, y) {
+	this.objs.push(new Predator(x, y));
+	this.predatorCount++;
+}
+
+function addBoid(x, y) {
+	this.objs.push(new Boid(x, y));
+	this.boidCount++;
+}
 
 function draw() {
 	background(0);
@@ -101,19 +113,17 @@ function draw() {
 	if (!PAUSE) {
 		if (isTouchDown == true) {
 			if (this.spawnSwitch.checked)
-				this.boids.push(new Boid(mouseX, mouseY));
+				addBoid(mouseX, mouseY);
 			else
-				this.predators.push(new Predator(mouseX, mouseY));
+				addPredator(mouseX, mouseY);
 		}
-
-		this.grid.update(this.boids);
+		this.grid.update(this.objs);
 		
-		for (let boid of boids) {
+		for (let obj of this.objs) {
 			if (SPATIAL_PARTITON) {
-				let objList = this.grid.getObjectsInCellAndNeighbours(boid.position.x, boid.position.y)
+				let objList = this.grid.getObjectsInCellAndNeighbours(obj.position.x, obj.position.y)
 				let state = {
 					objList: objList,
-					predatorList: this.predators,
 					alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
 					seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
 					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
@@ -122,12 +132,11 @@ function draw() {
 					cohesionRadius: 50.0,
 					avoidRadius: 50.0
 				}
-				boid.update(state);
+				obj.update(state);
 			}
 			else {
 				let state = {
-					boidList: this.boids,
-					predatorList: this.predators,
+					objList: this.objs,
 					alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
 					seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
 					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
@@ -136,18 +145,16 @@ function draw() {
 					cohesionRadius: 50.0,
 					avoidRadius: 50.0
 				}
-				boid.update(state);
+				obj.update(state);
 			}
 			
 		}
 
-		for(let predator of this.predators) predator.update();
 		for(let slider of this.sliders) slider.update();
 	}
 
 	// Rendering
-	for (let boid of boids) boid.draw();
-	for(let predator of this.predators) predator.draw();
+	for (let obj of this.objs) obj.draw();
 	for(let slider of this.sliders) slider.draw();
 	this.spawnSwitch.draw();
 

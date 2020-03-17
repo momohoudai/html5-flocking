@@ -3,7 +3,7 @@ function Predator(x, y) {
 	this.maxSpeed = 1.5;
 	this.maxSteer = 0.05;
 
-	
+	this.oldPosition = createVector(x, y);
 	this.position = createVector(x, y);
 	this.velocity = createVector(random(-2, 2), random(-2, 2));
 	this.acceleration = createVector(0, 0);
@@ -48,6 +48,7 @@ Predator.prototype.addForce = function(force) {
 }
 
 Predator.prototype.integrate = function() {
+	this.oldPosition = this.position.copy();
 	this.velocity.add(this.acceleration);
 	this.velocity.limit(this.maxSpeed);
 	this.position.add(this.velocity);
