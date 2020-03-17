@@ -52,9 +52,7 @@ Slider.prototype.draw = function() {
 }
 
 Slider.prototype.update = function() {
-
 	this.slide();
-	this.draw();
 }
 
 Slider.prototype.slide = function() {

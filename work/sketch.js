@@ -1,26 +1,25 @@
 var SLIDER_ALIGNMENT = 0;
 var SLIDER_SEPERATE = 1;
 var SLIDER_COHESION = 2;
+var DEBUG = false;
+var PAUSE = false;
+var SPATIAL_PARTITON = true;
 
 function setup() {
 	this.grid = new Grid(50, 50);
 	windowResized();
 	
-
 	this.boids = [];
 	this.isTouchDown = false;
-	for(let i = 0; i < 100; ++i) {
+	for(let i = 0; i < 500; ++i) {
 		boids.push(new Boid(random(0.0, width), random(0.0, height)));
 	}
+	this.predators = [new Predator(200, 200)];	
 
-
-	this.predators = [new Predator(200, 200)];
-
-	
 	this.sliders = [
 		new Slider({
 			x: 20,
-			y: 20,
+			y: 110,
 			w: 100, 
 			h: 10, 
 			sliderW: 15, 
@@ -33,7 +32,7 @@ function setup() {
 		}),
 		new Slider({
 			x: 20,
-			y: 60,
+			y: 150,
 			w: 100, 
 			h: 10, 
 			sliderW: 15, 
@@ -46,7 +45,7 @@ function setup() {
 		}),
 		new Slider({
 			x: 20,
-			y: 100,
+			y: 190,
 			w: 100, 
 			h: 10, 
 			sliderW: 15, 
@@ -61,7 +60,7 @@ function setup() {
 
 	this.spawnSwitch = new Switch({
 		x: 20,
-		y: 140,
+		y: 230,
 		w: 230,
 		h: 50,
 		labelT: 'Touch spawns Boids',
@@ -77,40 +76,76 @@ function windowResized() {
 	this.grid.resize();
 }
 
+function drawStats(x, y) {
+	stroke(200);
+	fill(255)
+	push();
+	textSize(20);
+	textAlign(LEFT,LEFT);
+	text("FPS: " + frameRate(), x ,y);
+	text("Boids: " + this.boids.length, x , y + 30);
+	text("Predators: " + this.predators.length, x , y + 60);
+	pop();
+}
+
+
 function draw() {
 	background(0);
 	
-	if (isTouchDown == true) {
-		if (this.spawnSwitch.checked)
-			this.boids.push(new Boid(mouseX, mouseY));
-		else
-			this.predators.push(new Predator(mouseX, mouseY));
-	}
-
-	this.grid.update(this.boids);
-	
-	for (let boid of boids) {
-		let state = {
-			boidList: this.boids,
-			predatorList: this.predators,
-			alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
-			seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
-			cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
+	// updates
+	if (!PAUSE) {
+		if (isTouchDown == true) {
+			if (this.spawnSwitch.checked)
+				this.boids.push(new Boid(mouseX, mouseY));
+			else
+				this.predators.push(new Predator(mouseX, mouseY));
 		}
-		boid.update(state);
+
+		this.grid.update(this.boids);
+		
+		for (let boid of boids) {
+			if (SPATIAL_PARTITON) {
+				let objList = this.grid.getObjectsInCellAndNeighbours(boid.position.x, boid.position.y)
+				let state = {
+					boidList: objList,
+					predatorList: this.predators,
+					alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
+					seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
+					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
+				}
+				boid.update(state);
+			}
+			else {
+				let state = {
+					boidList: this.boids,
+					predatorList: this.predators,
+					alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
+					seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
+					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
+				}
+				boid.update(state);
+			}
+			
+		}
+
+		for(let predator of this.predators) predator.update();
+		for(let slider of this.sliders) slider.update();
 	}
 
-	for(let predator of this.predators) {
-		predator.update();
-	}
-
-	for(let slider of this.sliders) {
-		slider.update();
-	}
+	// Rendering
+	for (let boid of boids) boid.draw();
+	for(let predator of this.predators) predator.draw();
+	for(let slider of this.sliders) slider.draw();
 	this.spawnSwitch.draw();
 
-	this.grid.drawDebug();
+	if (DEBUG) {
+		this.grid.drawDebug()
+	}
+	drawStats(20, 20);
+
+
 }
+
 
 function touchStarted() {
 

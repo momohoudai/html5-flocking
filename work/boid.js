@@ -11,8 +11,8 @@ function Boid(x, y) {
 	this.velocity.normalize();
 	this.velocity.mult(this.maxSpeed);
 	this.position = createVector(x, y);
+	this.oldPosition = createVector(x, y);
 
-	
 	this.alignmentRadius = 50.0;
 	this.seperateRadius = 50.0;	
 	this.cohesionRadius = 50.0;
@@ -24,10 +24,10 @@ Boid.prototype.update = function(state)
 	this.flock(state);
 	this.integrate();
 	this.wrap();
-	this.render();
 }
 
 Boid.prototype.flock = function({boidList, predatorList, alignmentFactor, seperateFactor, cohesionFactor}) {
+
 	let avoidForce = this.avoid(predatorList);
 	let alignmentForce = this.alignment(boidList);
 	let seperationForce = this.seperate(boidList);
@@ -178,6 +178,7 @@ Boid.prototype.addForce = function(force) {
 }
 
 Boid.prototype.integrate = function() {
+	this.oldPosition = this.position.copy();
 	this.velocity.add(this.acceleration);
 	this.velocity.limit(this.maxSpeed);
 	this.position.add(this.velocity);
@@ -196,7 +197,7 @@ Boid.prototype.wrap = function()  {
 		this.position.y = height + this.radius;
 }
 
-Boid.prototype.render = function() {
+Boid.prototype.draw = function() {
 	// Draw a triangle rotated in the direction of velocity
 	let theta = this.velocity.heading() + radians(90);
 	fill(127, 127, 127);

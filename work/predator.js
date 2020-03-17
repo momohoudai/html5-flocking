@@ -22,12 +22,10 @@ function Predator(x, y) {
 
 Predator.prototype.update = function() {
 	this.randomMovement();
-	
 	this.integrate();
 	this.wrap();
-
-	this.render();
 }
+
 Predator.prototype.randomMovement = function() {
 	if (this.randomMovementTimer > this.randomMovementDuration) {
 		this.idealDirection = createVector(random(-1.0, 1.0), random(-1.0, 1.0));
@@ -65,7 +63,7 @@ Predator.prototype.wrap = function()  {
 	if (this.position.y < -this.radius) 
 		this.position.y = height + this.radius;
 }
-Predator.prototype.render = function() {
+Predator.prototype.draw = function() {
 	// Draw a triangle rotated in the direction of velocity
 	let theta = this.velocity.heading() + radians(90);
 	fill(255, 0, 0);
