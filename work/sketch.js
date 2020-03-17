@@ -1,9 +1,14 @@
 var SLIDER_ALIGNMENT = 0;
 var SLIDER_SEPERATE = 1;
 var SLIDER_COHESION = 2;
+
+var TYPE_BOID = 0;
+var TYPE_PREDATOR = 1;
+
 var DEBUG = false;
 var PAUSE = false;
 var SPATIAL_PARTITON = true;
+
 
 function setup() {
 	this.grid = new Grid(50, 50);
@@ -82,7 +87,7 @@ function drawStats(x, y) {
 	push();
 	textSize(20);
 	textAlign(LEFT,LEFT);
-	text("FPS: " + frameRate(), x ,y);
+	text("FPS: " + floor(frameRate()), x ,y);
 	text("Boids: " + this.boids.length, x , y + 30);
 	text("Predators: " + this.predators.length, x , y + 60);
 	pop();
@@ -112,6 +117,9 @@ function draw() {
 					alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
 					seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
 					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
+					alignmentRadius: 50.0,
+					seperateRadius: 50.0,
+					cohesionRadius: 50.0
 				}
 				boid.update(state);
 			}
@@ -122,6 +130,9 @@ function draw() {
 					alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
 					seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
 					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
+					alignmentRadius: 50.0,
+					seperateRadius: 50.0,
+					cohesionRadius: 50.0
 				}
 				boid.update(state);
 			}

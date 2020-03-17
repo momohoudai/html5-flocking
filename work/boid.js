@@ -16,6 +16,9 @@ function Boid(x, y) {
 	this.alignmentRadius = 50.0;
 	this.seperateRadius = 50.0;	
 	this.cohesionRadius = 50.0;
+	this.avoidRadius = 50.0;
+
+	this.type = TYPE_BOID;
 
 }
 
@@ -80,7 +83,7 @@ Boid.prototype.avoid = function(obstacleList) {
 	let dir = createVector(0,0);
 	for (let obstacle of obstacleList) {
 		let distance = p5.Vector.dist(this.position, obstacle.position);
-		if (distance > 0 && distance < 80) {
+		if (distance > 0 && distance < this.avoidRadius) {
 			dir = p5.Vector.sub(this.position, obstacle.position);
 			++obstacleCount;
 		}

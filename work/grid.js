@@ -71,18 +71,25 @@ Grid.prototype.update = function(list) {
             this.arr[h].push(obj);
     }    
 }
-/*
+
 Grid.prototype.update = function(list) {
     for (let obj of list) {
         // get the hash of the boid
         let nh = this.hash(obj.position.x, obj.position.y);
         let oh = this.hash(obj.oldPosition.x, obj.oldPosition.y);
-        if (nh == oh) // ignore if the  
+        if (nh == oh) // ignore if the hash is the same
             continue;
-        if (this.isHashValid(h))
-            this.arr[h].push(obj);
+        else { 
+            if (this.isHashValid(nh)) // if new hash is valid, add to list
+                this.arr[nh].push(obj);
+            if (this.isHashValid(oh)) { // if old hash is valid, remove from list
+                let idx = this.arr[oh].indexOf(obj);
+                this.arr[oh].splice(idx, 1);
+            }
+        }
+        
     }    
-}*/
+}
 
 Grid.prototype.hash = function(x, y) {
     let xx = floor(x / this.ch);

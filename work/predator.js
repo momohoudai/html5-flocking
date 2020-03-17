@@ -17,6 +17,8 @@ function Predator(x, y) {
 	this.randomMovementDuration = random(2500.0, 5000.0);
 	this.maxSteer = 0.05;
 	this.idealDirection = createVector(0,0)
+
+	this.type = TYPE_PREDATOR
 	
 }
 
