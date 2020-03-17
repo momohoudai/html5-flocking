@@ -112,14 +112,15 @@ function draw() {
 			if (SPATIAL_PARTITON) {
 				let objList = this.grid.getObjectsInCellAndNeighbours(boid.position.x, boid.position.y)
 				let state = {
-					boidList: objList,
+					objList: objList,
 					predatorList: this.predators,
 					alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
 					seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
 					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
 					alignmentRadius: 50.0,
 					seperateRadius: 50.0,
-					cohesionRadius: 50.0
+					cohesionRadius: 50.0,
+					avoidRadius: 50.0
 				}
 				boid.update(state);
 			}
@@ -132,7 +133,8 @@ function draw() {
 					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
 					alignmentRadius: 50.0,
 					seperateRadius: 50.0,
-					cohesionRadius: 50.0
+					cohesionRadius: 50.0,
+					avoidRadius: 50.0
 				}
 				boid.update(state);
 			}
