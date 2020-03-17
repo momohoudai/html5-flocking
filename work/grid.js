@@ -61,7 +61,7 @@ Grid.prototype.clear = function() {
         this.arr[i] = [];
     }
 }
-/*
+
 Grid.prototype.update = function(list) {
     this.clear();
     for (let obj of list) {
