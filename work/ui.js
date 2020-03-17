@@ -134,3 +134,22 @@ Switch.prototype.processTouch = function() {
 	}
 	return false;
 }
+
+
+function CircleButton(x, y, r) {
+	this.x = x;
+	this.y = y;
+	this.radius = r;
+}
+
+CircleButton.prototype.draw = function() {
+	fill(255, 255, 255, 50);
+	circle(this.x, this.y, this.radius);
+}
+
+CircleButton.prototype.isCollide = function(x,y) {
+	let vec = createVector(x - this.x, y - this.y);
+	let distance = vec.mag();
+
+	return distance <= this.radius;
+}

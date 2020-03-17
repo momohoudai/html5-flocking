@@ -8,6 +8,8 @@ var TYPE_PREDATOR = 1;
 var DEBUG = false;
 var PAUSE = false;
 var SPATIAL_PARTITON = true;
+var SHOW_MENU = true;
+
 
 
 function setup() {
@@ -26,8 +28,8 @@ function setup() {
 
 	this.sliders = [
 		new Slider({
-			x: 20,
-			y: 110,
+			x: 40,
+			y: 130,
 			w: 100, 
 			h: 10, 
 			sliderW: 15, 
@@ -39,8 +41,8 @@ function setup() {
 			textSize: 24,
 		}),
 		new Slider({
-			x: 20,
-			y: 150,
+			x: 40,
+			y: 170,
 			w: 100, 
 			h: 10, 
 			sliderW: 15, 
@@ -52,8 +54,8 @@ function setup() {
 			textSize: 24,
 		}),
 		new Slider({
-			x: 20,
-			y: 190,
+			x: 40,
+			y: 210,
 			w: 100, 
 			h: 10, 
 			sliderW: 15, 
@@ -67,8 +69,8 @@ function setup() {
 	]
 
 	this.spawnSwitch = new Switch({
-		x: 20,
-		y: 230,
+		x: 40,
+		y: 250,
 		w: 230,
 		h: 50,
 		labelT: 'Touch spawns Boids',
@@ -76,6 +78,9 @@ function setup() {
 		colorT: '#999999',
 		colorF: '#CC0000'
 	})
+
+	// hide button
+	this.hideButton = new CircleButton(20, 20, 20);
 }
 
 
@@ -150,25 +155,65 @@ function draw() {
 			
 		}
 
-		for(let slider of this.sliders) slider.update();
+		menuUpdate();
 	}
 
 	// Rendering
-	for (let obj of this.objs) obj.draw();
-	for(let slider of this.sliders) slider.draw();
-	this.spawnSwitch.draw();
+	for (let obj of this.objs) 
+		obj.draw();
+	
+	menuDraw();
 
 	if (DEBUG) {
-		this.grid.drawDebug()
+		this.grid.drawDebug();
 	}
-	drawStats(20, 20);
 
-
+	this.hideButton.draw();
+	
 }
 
 
 function touchStarted() {
 
+	if (menuTouchStarted())
+		return;
+	
+	if (this.hideButton.isCollide(mouseX, mouseY)) {
+		SHOW_MENU = !SHOW_MENU;
+		return;
+	}
+		
+	this.isTouchDown =  true;
+}
+function touchEnded() {
+	menuTouchEnded();
+
+	this.isTouchDown = false; 
+}
+
+function menuDraw() {
+	if (!SHOW_MENU) 
+		return;
+	
+	//background
+	fill(0, 80, 0, 200)
+	rect(5, 5, 300, 320)
+
+	for(let slider of this.sliders) 
+		slider.draw();
+	this.spawnSwitch.draw();
+	drawStats(40, 40);
+}
+
+function menuUpdate(){
+	for(let slider of this.sliders) 
+		slider.update();
+}
+
+function menuTouchStarted() {
+	if (!SHOW_MENU) 
+		return false;
+	
 	let sliderTouched = false;
 	for (let slider of this.sliders) {
 		if (slider.touchStarted()) {
@@ -177,16 +222,18 @@ function touchStarted() {
 	}
 
 	if (sliderTouched)
-		return;
+		return true;
 
 	if (this.spawnSwitch.processTouch()) 
-		return;
-		
-	this.isTouchDown =  true;
+		return true;
+	
+	return false;
 }
-function touchEnded() {
+
+function menuTouchEnded() {
+	if (!SHOW_MENU) 
+		return;
+	 
 	for (let slider of this.sliders) 
 		slider.touchEnded();
-
-	this.isTouchDown = false; 
 }
