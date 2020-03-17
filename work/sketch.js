@@ -3,6 +3,7 @@ var SLIDER_SEPERATE = 1;
 var SLIDER_COHESION = 2;
 
 function setup() {
+	this.grid = new Grid(50, 50);
 	windowResized();
 	
 
@@ -73,6 +74,7 @@ function setup() {
 
 function windowResized() {
 	resizeCanvas(windowWidth * 0.99, windowHeight * 0.98);
+	this.grid.resize();
 }
 
 function draw() {
@@ -104,6 +106,8 @@ function draw() {
 		slider.update();
 	}
 	this.spawnSwitch.draw();
+
+	this.grid.drawDebug();
 }
 
 function touchStarted() {
