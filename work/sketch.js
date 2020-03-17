@@ -86,6 +86,8 @@ function draw() {
 		else
 			this.predators.push(new Predator(mouseX, mouseY));
 	}
+
+	this.grid.update(this.boids);
 	
 	for (let boid of boids) {
 		let state = {
