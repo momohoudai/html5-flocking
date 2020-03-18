@@ -35,7 +35,7 @@ function setup() {
 			sliderW: 15, 
 			sliderH: 25, 
 			min: 0.0, 
-			max: 1.0, 
+			max: 2.0, 
 			value: 0.5, 
 			label: "alignment",
 			textSize: 24,
@@ -49,7 +49,7 @@ function setup() {
 			sliderH: 25, 
 			min: 0.0, 
 			max: 2.0, 
-			value: 1.0, 
+			value: 0.5, 
 			label: "seperation",
 			textSize: 24,
 		}),
@@ -61,7 +61,7 @@ function setup() {
 			sliderW: 15, 
 			sliderH: 25, 
 			min: 0.0, 
-			max: 1.0, 
+			max: 2.0, 
 			value: 0.5, 
 			label: "cohesion",
 			textSize: 24,
@@ -80,7 +80,9 @@ function setup() {
 	})
 
 	// hide button
-	this.hideButton = new CircleButton(20, 20, 20);
+	this.hideButton = new CircleButton({x: 20, y: 20, r: 20});
+
+	this.uiBack = new RectBack({x: 5, y: 5, w: 300, h: 320, c: '#005500AA'});
 }
 
 
@@ -194,10 +196,10 @@ function touchEnded() {
 function menuDraw() {
 	if (!SHOW_MENU) 
 		return;
-	
-	//background
-	fill(0, 80, 0, 200)
-	rect(5, 5, 300, 320)
+
+	this.uiBack.draw(0, 80, 0, 200);
+
+
 
 	for(let slider of this.sliders) 
 		slider.draw();
@@ -225,6 +227,9 @@ function menuTouchStarted() {
 		return true;
 
 	if (this.spawnSwitch.processTouch()) 
+		return true;
+
+	if (this.uiBack.isCollide(mouseX, mouseY))
 		return true;
 	
 	return false;

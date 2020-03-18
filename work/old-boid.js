@@ -76,6 +76,7 @@ Boid.prototype.align = function(objList, radius) {
 	if (neighbourCount > 0 ) {
 		dir.div(neighbourCount);
 		dir.normalize();
+		dir.limit(this.maxSteer);
 		return dir;
 	} 
 	else {

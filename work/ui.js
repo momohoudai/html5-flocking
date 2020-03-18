@@ -136,7 +136,7 @@ Switch.prototype.processTouch = function() {
 }
 
 
-function CircleButton(x, y, r) {
+function CircleButton({x, y, r}) {
 	this.x = x;
 	this.y = y;
 	this.radius = r;
@@ -152,4 +152,38 @@ CircleButton.prototype.isCollide = function(x,y) {
 	let distance = vec.mag();
 
 	return distance <= this.radius;
+}
+
+function RectBack({x,y,w,h,c}) {
+	this.x = x;
+	this.y = y;
+	this.w = w;
+	this.h = h;
+	this.color = c;
+
+}
+
+RectBack.prototype.isCollide = function(x,y) {
+	return x >= this.x && x <= this.x + this.w && 
+		y >= this.y && y <= this.y + this.h;
+}
+
+RectBack.prototype.draw = function() {
+	fill(this.color)
+	rect(this.x, this.y, this.w, this.h);
+}
+
+function Button({x,y,w,h, color, colorDown}) {
+	this.x = x;
+	this.y = y;
+	this.w = w;
+	this.h = h;
+	this.color = color;
+	this.colorDown = colorDown;
+	this.isDown = false;
+}
+
+Button.prototype.draw = function() {
+	fill(this.isDown ? this.colorDown : this.color);
+	rect(this.x, this.y, this.w, this.h);
 }
