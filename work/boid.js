@@ -1,9 +1,7 @@
-
-
 function Boid(x, y) {
 
 	this.maxSpeed = 3;
-	this.maxSteer = 0.05;
+	this.maxSteer = 0.1;
 	this.radius = 5;
 
 	this.acceleration = createVector(0,0);
@@ -13,10 +11,6 @@ function Boid(x, y) {
 	this.position = createVector(x, y);
 	this.oldPosition = createVector(x, y);
 
-	this.alignmentRadius = 50.0;
-	this.seperateRadius = 50.0;	
-	this.cohesionRadius = 50.0;
-	this.avoidRadius = 50.0;
 
 	this.type = TYPE_BOID;
 
@@ -29,60 +23,81 @@ Boid.prototype.update = function(state)
 	this.wrap();
 }
 
+Boid.prototype.flock = function({
+	objList, 
+	alignmentFactor, 
+	seperateFactor, 
+	cohesionFactor,
+	alignmentRadius,
+	seperateRadius,
+	cohesionRadius,
+	avoidRadius,
+}) {
 
-
-Boid.prototype.flock = function({objList, predatorList, alignmentFactor, seperateFactor, cohesionFactor}) {
-	let alignmentForce = createVector(0.0);
-	let seperateForce = createVector(0.0);
-	let cohesionForce = createVector(0.0);
-	let neighbourCount = 0;
-
-	for(let obj of objList) {
-		alignmentForce.add(this.align(obj));
-		seperateForce.add(this.seperate(obj));
-		cohesionForce.add(this.cohere(obj));
-		++neighbourCount;
+	let avoidForce = this.avoid(objList, avoidRadius);
+	let alignmentForce = this.align(objList, alignmentRadius);
+	let seperationForce = this.seperate(objList, seperateRadius);
+	let cohesionForce = this.cohesion(objList, cohesionRadius);
+	
+	
+	this.addForce(p5.Vector.mult(avoidForce, 5.0));
+	if (avoidForce.magSq() <= 0) {
+		this.addForce(p5.Vector.mult(alignmentForce, alignmentFactor));
+		this.addForce(p5.Vector.mult(seperationForce, seperateFactor));
+		this.addForce(p5.Vector.mult(cohesionForce, cohesionFactor));
 	}
-
-	if (neighbourCount > 0 ) {
-		alignmentForce.div(neighbourCount);
-		alignmentForce.normalize();
-	}
-
-	this.addForce(p5.Vector.mult(alignmentForce, alignmentFactor));
-	this.addForce(p5.Vector.mult(seperateForce, seperateFactor));
-	this.addForce(p5.Vector.mult(cohesionForce, cohesionFactor));
+	
 }
 
-Boid.prototype.align = function(obj) {
-	if (obj.type != TYPE_BOID)
-		return;
-	let vec = createVector(0,0);
-	let distance = p5.Vector.dist(this.position, obj.position);
-	if (distance > 0 && distance < this.alignmentRadius) {
-		// Accumulate velocity based on distance
-		vec.set(obj.velocity);
-		if (vec.magSq() > 0)
-			vec.normalize();
-		let factorBaseOnDistance = lerp(1.0, 0.0, distance/this.alignmentRadius);
-		vec.mult(factorBaseOnDistance)
-	}
-	return vec;
-}
-
-Boid.prototype.avoid = function(obstacleList) {
-	let obstacleCount = 0;
+Boid.prototype.align = function(objList, radius) {
 	let dir = createVector(0,0);
-	for (let obstacle of obstacleList) {
-		let distance = p5.Vector.dist(this.position, obstacle.position);
-		if (distance > 0 && distance < this.avoidRadius) {
-			dir = p5.Vector.sub(this.position, obstacle.position);
-			++obstacleCount;
+	let neighbourCount = 0;
+	
+	// For each neighbour, accumulate all their velocity vector.
+	for(let obj of objList) {
+		if (obj.type != TYPE_BOID )
+			continue;
+		let distance = p5.Vector.dist(this.position, obj.position);
+		if (distance > 0 && distance < radius) {
+			// Accumulate velocity based on distance
+			let vec = createVector(0,0);
+			vec.set(obj.velocity);
+			if (vec.magSq() > 0)
+				vec.normalize();
+			
+			let factorBaseOnDistance = lerp(1.0, 0.0, distance/radius);
+			vec.mult(factorBaseOnDistance)
+		
+			dir.add(vec);
+			++neighbourCount;
+		}
+	}
+	
+	if (neighbourCount > 0 ) {
+		dir.div(neighbourCount);
+		dir.normalize();
+		return dir;
+	} 
+	else {
+		return createVector(0,0);
+	}
+}
+
+Boid.prototype.avoid = function(objList, radius) {
+	let count = 0;
+	let dir = createVector(0,0);
+	for (let obj of objList) {
+		if (obj.type != TYPE_PREDATOR )
+			continue;
+		let distance = p5.Vector.dist(this.position, obj.position);
+		if (distance > 0 && distance < radius) {
+			dir = p5.Vector.sub(this.position, obj.position);
+			++count;
 		}
 	}
 
-	if (obstacleCount > 0 ) {
-		dir.div(obstacleCount);
+	if (count > 0 ) {
+		dir.div(count);
 	
 		if (dir.mag() > 0) {
 			dir.normalize();
@@ -98,17 +113,19 @@ Boid.prototype.avoid = function(obstacleList) {
 	}
 }
 
-Boid.prototype.cohere = function(boidList) {
+Boid.prototype.cohesion = function(objList, radius) {
 
 	// Find the center of all boids around current boid
 	// Midpoint formula: (all positions)/(number of positions)
 	let neighbourCount = 0;
 	let midpoint = createVector(0,0);
 	
-	for (let boid of boidList) {
-		let distance = p5.Vector.dist(this.position, boid.position);
-		if (distance > 0 && distance < this.cohesionRadius) {
-			midpoint.add(boid.position);
+	for (let obj of objList) {
+		if (obj.type != TYPE_BOID )
+			continue;
+		let distance = p5.Vector.dist(this.position, obj.position);
+		if (distance > 0 && distance < radius) {
+			midpoint.add(obj.position);
 			neighbourCount++;
 		}
 	}
@@ -129,19 +146,21 @@ Boid.prototype.cohere = function(boidList) {
 	}
 }
 
-Boid.prototype.seperate = function(boidList) {
+Boid.prototype.seperate = function(objList, radius) {
 	let neighbourCount = 0;
 	let dir = createVector(0,0);
 	// For each neighbour, accumulate all vector from neighbour to current boid.
-	for(let boid of boidList) {
-		let distance = p5.Vector.dist(this.position, boid.position);
-		if (distance > 0 && distance < this.seperateRadius) {
+	for(let obj of objList) {
+		if (obj.type != TYPE_BOID )
+			continue;
+		let distance = p5.Vector.dist(this.position, obj.position);
+		if (distance > 0 && distance < radius) {
 			// Accumulate velocity based on distance
-			let diff = p5.Vector.sub(this.position, boid.position);
+			let diff = p5.Vector.sub(this.position, obj.position);
 			if (diff.magSq() > 0)
 				diff.normalize();	
 			
-			let factorBaseOnDistance = lerp(1.0, 0.0, distance/this.seperateRadius);
+			let factorBaseOnDistance = lerp(1.0, 0.0, distance/radius);
 			diff.mult(factorBaseOnDistance)
 			dir.add(diff);
 			neighbourCount++;

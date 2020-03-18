@@ -22,7 +22,8 @@ function setup() {
 
 	addPredator(200, 200);
 	this.isTouchDown = false;
-	for(let i = 0; i < 500; ++i) {
+	let spawnAmt = (this.grid.rows * this.grid.cols) / 4;
+	for(let i = 0; i < spawnAmt; ++i) {
 		addBoid(random(0.0, width), random(0.0, height));
 	}
 
@@ -35,8 +36,8 @@ function setup() {
 			sliderW: 15, 
 			sliderH: 25, 
 			min: 0.0, 
-			max: 2.0, 
-			value: 0.5, 
+			max: 0.25, 
+			value: 0.25, 
 			label: "alignment",
 			textSize: 24,
 		}),
