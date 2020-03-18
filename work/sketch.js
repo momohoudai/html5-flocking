@@ -80,8 +80,8 @@ function setup() {
 	})
 
 	// hide button
-	this.hideButton = new CircleButton({x: 20, y: 20, r: 20});
-
+	this.hideButton = new CircleButton({x: 20, y: 20, r: 20, c: '#FFFFFF50'});
+	
 	this.uiBack = new RectBack({x: 5, y: 5, w: 300, h: 320, c: '#005500AA'});
 }
 

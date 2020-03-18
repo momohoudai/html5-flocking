@@ -136,14 +136,15 @@ Switch.prototype.processTouch = function() {
 }
 
 
-function CircleButton({x, y, r}) {
+function CircleButton({x, y, r, c}) {
 	this.x = x;
 	this.y = y;
 	this.radius = r;
+	this.color = c;
 }
 
 CircleButton.prototype.draw = function() {
-	fill(255, 255, 255, 50);
+	fill(this.color);
 	circle(this.x, this.y, this.radius);
 }
 
@@ -186,4 +187,20 @@ function Button({x,y,w,h, color, colorDown}) {
 Button.prototype.draw = function() {
 	fill(this.isDown ? this.colorDown : this.color);
 	rect(this.x, this.y, this.w, this.h);
+}
+
+RectBack.prototype.isCollide = function(x,y) {
+	return x >= this.x && x <= this.x + this.w && 
+		y >= this.y && y <= this.y + this.h;
+}
+
+Button.prototype.processTouch = function() {
+	if (this.isCollide(mouseX, mouseY)) {
+		this.isDown = true;
+		return true;
+	}
+	else {
+		this.isDown = false;
+		return false;
+	}
 }
