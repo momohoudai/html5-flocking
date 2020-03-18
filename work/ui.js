@@ -174,18 +174,22 @@ RectBack.prototype.draw = function() {
 	rect(this.x, this.y, this.w, this.h);
 }
 
-function Button({x,y,w,h, color, colorDown}) {
+function Button({x,y,w,h, color, colorDown, text}) {
 	this.x = x;
 	this.y = y;
 	this.w = w;
 	this.h = h;
 	this.color = color;
 	this.colorDown = colorDown;
+	this.text = text;
 	this.isDown = false;
 }
 
 Button.prototype.draw = function() {
 	fill(this.isDown ? this.colorDown : this.color);
+	textSize(20);
+	textAlign(CENTER,CENTER);
+	text(this.text, this.w/2, this.h/2);
 	rect(this.x, this.y, this.w, this.h);
 }
 
