@@ -1,7 +1,7 @@
 function Boid(x, y) {
 
 	this.maxSpeed = 3;
-	this.maxSteer = 0.05;
+	this.maxSteer = 0.1;
 	this.radius = 5;
 
 	this.acceleration = createVector(0,0);

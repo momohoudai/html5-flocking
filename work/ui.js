@@ -189,22 +189,28 @@ Button.prototype.draw = function() {
 	fill(this.isDown ? this.colorDown : this.color);
 	textSize(20);
 	textAlign(CENTER,CENTER);
-	text(this.text, this.w/2, this.h/2);
 	rect(this.x, this.y, this.w, this.h);
+	fill(255);
+	text(this.text, this.x + this.w/2, this.y + this.h/2);
 }
 
-RectBack.prototype.isCollide = function(x,y) {
+Button.prototype.isCollide = function(x,y) {
 	return x >= this.x && x <= this.x + this.w && 
 		y >= this.y && y <= this.y + this.h;
 }
 
-Button.prototype.processTouch = function() {
+Button.prototype.processTouchStart = function() {
 	if (this.isCollide(mouseX, mouseY)) {
 		this.isDown = true;
 		return true;
 	}
-	else {
-		this.isDown = false;
-		return false;
+	return false;
+}
+
+Button.prototype.processTouchEnded = function() {
+	this.isDown = false;
+	if (this.isCollide(mouseX, mouseY)) {
+		return true;
 	}
+	return false;
 }

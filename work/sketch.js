@@ -81,8 +81,8 @@ function setup() {
 
 	// hide button
 	this.hideButton = new CircleButton({x: 20, y: 20, r: 20, c: '#FFFFFF50'});
-	
-	this.uiBack = new RectBack({x: 5, y: 5, w: 300, h: 320, c: '#005500AA'});
+	this.uiBack = new RectBack({x: 5, y: 5, w: 300, h: 380, c: '#005500AA'});
+	this.clearButton = new Button({x: 40, y: 320, w: 230, h: 50, color:'#999999', colorDown:'#555555', text:'Clear'});
 }
 
 
@@ -110,7 +110,13 @@ function addPredator(x, y) {
 
 function addBoid(x, y) {
 	this.objs.push(new Boid(x, y));
+
 	this.boidCount++;
+}
+
+function clearObjs() {
+	this.objs.length = 0;
+	this.grid.clear();
 }
 
 function draw() {
@@ -134,9 +140,9 @@ function draw() {
 					alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
 					seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
 					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
-					alignmentRadius: 50.0,
-					seperateRadius: 50.0,
-					cohesionRadius: 50.0,
+					alignmentRadius: 100.0,
+					seperateRadius: 20.0,
+					cohesionRadius: 20.0,
 					avoidRadius: 50.0
 				}
 				obj.update(state);
@@ -147,10 +153,10 @@ function draw() {
 					alignmentFactor: this.sliders[SLIDER_ALIGNMENT].getValue(),
 					seperateFactor: this.sliders[SLIDER_SEPERATE].getValue(),
 					cohesionFactor: this.sliders[SLIDER_COHESION].getValue(),
-					alignmentRadius: 50.0,
-					seperateRadius: 50.0,
-					cohesionRadius: 50.0,
-					avoidRadius: 50.0
+					alignmentRadius: 100.0,
+					seperateRadius: 100.0,
+					cohesionRadius: 100.0,
+					avoidRadius: 100.0
 				}
 				obj.update(state);
 			}
@@ -177,13 +183,15 @@ function draw() {
 
 function touchStarted() {
 
-	if (menuTouchStarted())
-		return;
-	
 	if (this.hideButton.isCollide(mouseX, mouseY)) {
 		SHOW_MENU = !SHOW_MENU;
 		return;
 	}
+
+	if (menuTouchStarted())
+		return;
+	
+
 		
 	this.isTouchDown =  true;
 }
@@ -205,6 +213,7 @@ function menuDraw() {
 		slider.draw();
 	this.spawnSwitch.draw();
 	drawStats(40, 40);
+	this.clearButton.draw();
 }
 
 function menuUpdate(){
@@ -229,6 +238,12 @@ function menuTouchStarted() {
 	if (this.spawnSwitch.processTouch()) 
 		return true;
 
+
+
+	if (this.clearButton.processTouchStart() ) {
+		return true;
+	}
+
 	if (this.uiBack.isCollide(mouseX, mouseY))
 		return true;
 	
@@ -241,4 +256,11 @@ function menuTouchEnded() {
 	 
 	for (let slider of this.sliders) 
 		slider.touchEnded();
+
+	
+	if (this.clearButton.processTouchEnded()) {
+		clearObjs();
+	}
+
+		
 }
