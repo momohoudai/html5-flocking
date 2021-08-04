@@ -1,2 +1,2 @@
-The demo is avalible to play at: https://momodevelop.gitlab.io/html5-flocking/
+The demo is avalible to play at: https://momodevelop.github.io/html5-flocking/
 
